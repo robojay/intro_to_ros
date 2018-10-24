@@ -91,15 +91,30 @@ class NeatoNode:
         self.robot.setBacklight(1)
         self.robot.setLED("Green")
         # main loop of driver
-        r = rospy.Rate(20)
+        r = rospy.Rate(2.5)
         cmd_rate= self.CMD_RATE
+        lastSpinLoopTime = rospy.get_time()
 
         while not rospy.is_shutdown():
+            #rightNow = rospy.get_time()
+            #print "Spin Loop Rate: " + str(1.0 / (rightNow - lastSpinLoopTime)) + " Hz"
+            #lastSpinLoopTime = rightNow
+
+            # prepare laser scan
+            #scan.header.stamp = rospy.Time.now()
+            #scanStart = rospy.get_time()
+
+            # moved just prior to sleep...  self.robot.requestScan()
+            #scan.ranges = self.robot.getScanRanges()
+            #print "...Scan delta = " + str(rospy.get_time() - scanStart)
+
             # notify if low batt
             #if self.robot.getCharger() < 10:
             #    print "battery low " + str(self.robot.getCharger()) + "%"
             # get motor encoder values
+            #motorStart = rospy.get_time()
             left, right = self.robot.getMotors()
+            #print "...Motor delta = " + str(rospy.get_time() - motorStart)
 
             cmd_rate = cmd_rate-1
             if cmd_rate ==0:
@@ -114,9 +129,11 @@ class NeatoNode:
 
             # prepare laser scan
             scan.header.stamp = rospy.Time.now()
-           
+            #scanStart = rospy.get_time()
+
             self.robot.requestScan()
             scan.ranges = self.robot.getScanRanges()
+            #print "...Scan delta = " + str(rospy.get_time() - scanStart)
 
             # now update position information
             dt = (scan.header.stamp - then).to_sec()
@@ -154,12 +171,17 @@ class NeatoNode:
 
 
             # sensors
+            #sensorsStart = rospy.get_time()
             lsb, rsb, lfb, rfb = self.robot.getDigitalSensors()
+            #print "...Sensors delta = " + str(rospy.get_time() - sensorsStart)
 
             # buttons
+            #buttonsStart = rospy.get_time()
             btn_soft, btn_scr_up, btn_start, btn_back, btn_scr_down = self.robot.getButtons()
+            #print "...Buttons delta = " + str(rospy.get_time() - buttonsStart)
 
 
+            #publishStart = rospy.get_time()
             # publish everything
             self.odomBroadcaster.sendTransform((self.x, self.y, 0), (quaternion.x, quaternion.y, quaternion.z,
                                                                      quaternion.w), then, "base_footprint", "odom")
@@ -178,6 +200,12 @@ class NeatoNode:
                     sensor.value = b
                     sensor.name = sensor_enum[idx]
                     self.sensorPub.publish(sensor)
+
+            #print "...Publish delta = " + str(rospy.get_time() - buttonsStart)
+
+            #print "===Spin Loop delta = " + str(rospy.get_time() - lastSpinLoopTime)
+
+            #self.robot.requestScan()
             # wait, then do it again
             r.sleep()
 

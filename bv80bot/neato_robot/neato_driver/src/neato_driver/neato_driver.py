@@ -434,6 +434,8 @@ class Botvac():
     # if no data is avaialable and we timeout returns line=""
     def getResponse(self,timeout=1):
 
+        #getResponseStart = rospy.get_time()
+        #waitCount = 0
         # if we don't have any data in currentResponse, wait for more data to come in (or timeout) 
         while (len(self.currentResponse)==0) and (not rospy.is_shutdown()) and timeout > 0:
 
@@ -445,8 +447,12 @@ class Botvac():
                   self.currentResponse=[] # no data to get
 
             if len(self.currentResponse)==0: # nothing in the buffer so wait (or until timeout)
+               #waitCount += 1
                time.sleep(0.010)
                timeout=timeout-0.010
+
+        #if waitCount > 0:
+            #print "......getResponse " + str(rospy.get_time() - getResponseStart)
 
         # default to nothing to return
         line = ""

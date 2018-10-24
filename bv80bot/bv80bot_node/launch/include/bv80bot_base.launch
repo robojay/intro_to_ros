@@ -16,7 +16,7 @@
   
 
   <!-- launch the teleop controler -->
-  <include file="$(find bv80bot_node)/launch/include/$(arg teleop_controler)_teleop.launch" />
+  <!-- include file="$(find bv80bot_node)/launch/include/$(arg teleop_controler)_teleop.launch" / -->
 
   
   <!--  smooths inputs from cmd_vel_mux/input/teleop_raw to cmd_vel_mux/input/teleop -->
