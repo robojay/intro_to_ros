@@ -7,7 +7,7 @@
         keyboard
         logitech
   -->
-  <arg name="teleop_controler"   default="xbox360" />
+  <arg name="teleop_controler"   default="keyboard" />
 
 
   <arg name="input_cmd_vel_topic"    default="/raw_cmd_vel" />
@@ -53,6 +53,8 @@
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" >
       <param name="use_gui" value="False"/>
   </node>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_to_camera_publisher" args="-0.100 0.0 0.150 0 0 0 1 base_link camera_link 100" />
 
 </launch>
 

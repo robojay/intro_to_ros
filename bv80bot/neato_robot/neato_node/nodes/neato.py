@@ -91,7 +91,7 @@ class NeatoNode:
         self.robot.setBacklight(1)
         self.robot.setLED("Green")
         # main loop of driver
-        r = rospy.Rate(2.5)
+        r = rospy.Rate(20)
         cmd_rate= self.CMD_RATE
         lastSpinLoopTime = rospy.get_time()
 
